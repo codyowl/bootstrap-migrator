@@ -1,5 +1,36 @@
 import os
 import argparse
+import re
+#bootstrap 3 
+from components import TABLE_CONDENSED as TC, CONTROL_LABEL as CL, RADIO as R, RADIO_INLINE as RL, \
+CHECKBOX as C, CHECKBOX_INLINE as CI, INPUT_LG as IL, INPUT_SM as IS, HELP_BLOCK as HB, BUTTON_DEFAULT as BD, \
+IMAGE_RESPONSIVE as IR, CENTER_BLOCK as CB, DIVIDER as D, LIST_GROUP_ITEM as LGI, \
+BREADCUM as B, ITEM as I
+#bootstrap 4 
+from components import table_condensed as tc, control_label as cl, radio as r, radio_inline as rl, \
+checkbox as c, checkbox_inline as ci, input_lg as il, input_sm as ism, help_block as hb, button_default as bd, \
+image_responsive as ir, center_block as cb, divider as d, list_group_item as lgi, \
+breadcum as b, item as i 
+
+#listing out the alternate classes 
+component_migrator_dict = {
+	TC : tc,
+	CL : cl,
+	R : r,
+	C : c,
+	CI : ci,
+	IL : il,
+	IS : ism,
+	HB : hb,
+	BD : bd,
+	IR : ir,
+	CB : cb,
+	D : d,
+	LGI : lgi,
+	B : b,
+	I : i
+}
+
 
 parser = argparse.ArgumentParser()
 
@@ -17,82 +48,21 @@ def get_files(source_path):
 	for file in os.listdir(source_path):
 		if file.endswith(".html"):
 			file_list.append(os.path.join(source_path, file))
-	return file_list		
+	return file_list        
 
-#to get version (for later progress)
-def version_checker(source_path):
-	pass
+def component_migrator(file, component_migrator_dict):
+	regex = re.compile('|'.join(map(re.escape, component_migrator_dict)))
+	def match_mapper(match):
+		return component_migrator_dict[match.group(0)]
+	return regex.sub(match_mapper, file)    
 
-
-def component_migrator(file_list):
+def migrator(file_list, component_migrator_dict):
 	for file in file_list:
 		file_opener = open(file)
-		file_reader = file_opener.readlines()
-		for content in file_reader:
-			if ".table-condensed" in content:
-				pass
-			if ".control-label" in content:
-				pass
-			
-			#checkboxes and radio buttons
-			if ".radio" in content:
-				pass
-			if ".radio-inline" in content:
-				pass
-			if ".checkbox" in content:
-				pass
-			if ".checkbox-inline" in content:
-				pass
+		file_reader = file_opener.read()
+		file_opener.close()
+		print component_migrator(file_reader, component_migrator_dict)
 
-			#form control size
-			if ".input-lg" in content:
-				pass
-			if ".input-sm" in content:
-				pass
-
-			#help text
-			if ".help-block" in content:
-				pass
-
-			#buttons
-			#semantic styles
-			if ".btn-default" or ".btn-info" in content:
-				pass
-			if ".btn-xs" in content:
-				pass
-
-			#images
-			#responsive images
-			if ".img-responsive" in content:
-				pass
-			#image alignment
-			if ".center-block" in content:
-				pass
-
-			#dropdowns
-			#Dividers 
-			if ".divider" in content:
-				pass
-
-			#List Groups
-			#Button List Items 
-			if ".list-group-item" in content:
-				pass
-
-			#Breadcrumbs
-			#classes
-			if ".breadcrumb" in content:
-				pass
-
-			#Carousels
-			#Carousel Item
-			if ".item" in content:
-				pass 
-					
-					
-
-
-
-
-
-
+if __name__ == "__main__":
+	file_lister = get_files(source_path)
+	print migrator(file_lister, component_migrator_dict)
