@@ -58,11 +58,13 @@ def component_migrator(file, component_migrator_dict):
 
 def migrator(file_list, component_migrator_dict):
 	for file in file_list:
-		file_opener = open(file)
-		file_reader = file_opener.read()
-		file_opener.close()
-		print component_migrator(file_reader, component_migrator_dict)
+		with open(file, 'r+') as opener:
+			file_reader = opener.read()
+			content = component_migrator(file_reader, component_migrator_dict)
+			opener.seek(0)
+			opener.write(content)
+			opener.truncate()
 
 if __name__ == "__main__":
 	file_lister = get_files(source_path)
-	print migrator(file_lister, component_migrator_dict)
+	migrator(file_lister, component_migrator_dict)
